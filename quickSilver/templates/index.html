@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Silver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .step.completed .step-circle {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            color: #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            border-left: 4px solid #4c4;
+            color: #3a3;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            color: #1976D2;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .content-analysis {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .content-analysis h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .content-analysis > p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .content-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .content-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .content-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+        }
+
+        .content-card input[type="checkbox"] {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .content-card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            padding-right: 35px;
+        }
+
+        .content-card-count {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .content-card-preview {
+            color: #666;
+            font-size: 0.85em;
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .selection-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .selection-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .select-all-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .select-all-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .deselect-all-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .deselect-all-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .results-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-export {
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-export:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .stats-bar {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-section {
+            margin-bottom: 30px;
+            animation: slideInLeft 0.4s ease;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .data-section h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-item {
+            background: #f9f9f9;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s;
+        }
+
+        .data-item:hover {
+            background: #f0f4ff;
+            transform: translateX(3px);
+        }
+
+        .data-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        .data-item-content {
+            color: #666;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .metadata-item {
+            display: flex;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 120px;
+            font-size: 0.95em;
+        }
+
+        .metadata-value {
+            color: #333;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .more-items-notice {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-style: italic;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .step-indicator::before {
+                display: none;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .export-buttons {
+                width: 100%;
+            }
+
+            .btn-export {
+                flex: 1;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕷️ QuickSilver</h1>
+            <p>Data scraping • Content Extraction</p>
+        </div>
+
+        <div class="main-card">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Enter URL</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Select Content</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Extract Data</div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="alert alert-error" id="errorAlert"></div>
+            <div class="alert alert-success" id="successAlert"></div>
+            <div class="alert alert-info" id="infoAlert"></div>
+
+            <!-- Step 1: URL Input -->
+            <div class="input-section" id="urlSection">
+                <div class="input-group">
+                    <label for="urlInput">🌐 Website URL *</label>
+                    <input 
+                        type="text" 
+                        id="urlInput" 
+                        placeholder="https://example.com"
+                        value=""
+                    >
+                    <div class="help-text">Enter the full URL to analyze what content is available for scraping</div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="analyzeBtn" onclick="analyzeURL()">
+                        <span>🔍</span>
+                        <span>Analyze Content</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetAll()">
+                        <span>🔄</span>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loadingSection">
+                <div class="spinner"></div>
+                <p id="loadingText">Analyzing page content...</p>
+            </div>
+
+            <!-- Step 2: Content Selection -->
+            <div class="content-analysis" id="contentAnalysis">
+                <h2>📋 Available Content - Select What to Scrape</h2>
+                <p>Choose the content types you want to extract. All selected data will be scraped <strong>completely</strong> with <strong>no limits or omissions</strong>. Every single item will be captured!</p>
+                
+                <div class="content-grid" id="contentGrid"></div>
+
+                <div class="selection-actions">
+                    <button class="select-all-btn" onclick="selectAll()">✓ Select All</button>
+                    <button class="deselect-all-btn" onclick="deselectAll()">✗ Deselect All</button>
+                </div>
+
+                <div class="button-group" style="margin-top: 25px;">
+                    <button class="btn btn-success" onclick="startScraping()">
+                        <span>🚀</span>
+                        <span>Start Full Scrape</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="backToURL()">
+                        <span>←</span>
+                        <span>Back to URL</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Results -->
+            <div class="results-section" id="resultsSection">
+                <div class="results-header">
+                    <h2>📊 Scraping Results</h2>
+                    <div class="export-buttons">
+                        <button class="btn-export" onclick="exportData('json')">
+                            <span>💾</span>
+                            <span>Export JSON</span>
+                        </button>
+                        <button class="btn-export" onclick="exportData('xlsx')">
+                            <span>📊</span>
+                            <span>Export Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-bar" id="statsBar"></div>
+                <div id="resultsContent"></div>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="startNewScrape()">
+                        <span>🔄</span>
+                        <span>New Scrape</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Built with ❤️ using Flask, Beautiful Soup & NLTK • <a href="#" onclick="showAbout(); return false;">About</a></p>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        let availableContent = null;
+        let currentURL = '';
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.textContent = message;
+            errorAlert.style.display = 'block';
+            setTimeout(() => errorAlert.style.display = 'none', 8000);
+        }
+
+        function showSuccess(message) {
+            const successAlert = document.getElementById('successAlert');
+            successAlert.textContent = message;
+            successAlert.style.display = 'block';
+            setTimeout(() => successAlert.style.display = 'none', 5000);
+        }
+
+        function showInfo(message) {
+            const infoAlert = document.getElementById('infoAlert');
+            infoAlert.textContent = message;
+            infoAlert.style.display = 'block';
+            setTimeout(() => infoAlert.style.display = 'none', 6000);
+        }
+
+        function setStep(stepNumber) {
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active', 'completed');
+                if (i < stepNumber) {
+                    step.classList.add('completed');
+                } else if (i === stepNumber) {
+                    step.classList.add('active');
+                }
+            }
+        }
+
+        async function analyzeURL() {
+            const url = document.getElementById('urlInput').value.trim();
+            
+            if (!url) {
+                showError('📝 Please enter a URL to analyze');
+                return;
+            }
+
+            currentURL = url;
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loadingSection = document.getElementById('loadingSection');
+            
+            analyzeBtn.disabled = true;
+            loadingSection.style.display = 'block';
+            document.getElementById('loadingText').textContent = 'Analyzing page content...';
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    availableContent = result.available_content;
+                    displayContentOptions(result.available_content, result.page_title);
+                    showSuccess(`✅ Found ${Object.keys(result.available_content).length} content types available for scraping!`);
+                    setStep(2);
+                } else {
+                    showError(result.error);
+                }
+            } catch (error) {
+                showError('🔌 Network error: Unable to connect to server. Make sure the Flask app is running.');
+            } finally {
+                analyzeBtn.disabled = false;
+                loadingSection.style.display = 'none';
+            }
+        }
+
+        function displayContentOptions(content, pageTitle) {
+            const contentGrid = document.getElementById('contentGrid');
+            contentGrid.innerHTML = '';
+
+            showInfo(`📄 Analyzing: ${pageTitle}`);
+
+            const contentIcons = {
+                'titles': '📌',
+                'descriptions': '📝',
+                'images': '🖼️',
+                'links': '🔗',
+                'tables': '📊',
+                'contact': '📧',
+                'prices': '💰',
+                'videos': '🎥',
+                'forms': '📋',
+                'meta': '🏷️'
+            };
+
+            for (const [type, data] of Object.entries(content)) {
+                const card = document.createElement('div');
+                card.className = 'content-card selected';
+                card.onclick = function() { toggleCard(this); };
+
+                const icon = contentIcons[type] || '📦';
+                
+                card.innerHTML = `
+                    <input type="checkbox" checked data-type="${type}" onclick="event.stopPropagation()">
+                    <div class="content-card-title">${icon} ${formatName(type)}</div>
+                    <div class="content-card-count">${data.count}</div>
+                    <div class="content-card-preview">${escapeHtml(data.preview)}</div>
+                `;
+                
+                contentGrid.appendChild(card);
+            }
+
+            document.getElementById('urlSection').style.display = 'none';
+            document.getElementById('contentAnalysis').style.display = 'block';
+        }
+
+        function toggleCard(card) {
+            card.classList.toggle('selected');
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            checkbox.checked = card.classList.contains('selected');
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.content-card').forEach(card => {
+                card.classList.add('selected');
+                card.querySelector('input[type="checkbox"]').checked = true;
+            });
+            showInfo('✅ All content types selected');
+        }
+
+        function deselectAll() {
+            document.querySelectorAll('.content-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('input[type="checkbox"]').checked = false;
+            });
+            showInfo('✗ All content types deselected');
+        }
+
+        async function startScraping() {
+            const selectedFeatures = Array.from(
+                document.querySelectorAll('.content-card input:checked')
+            ).map(cb => cb.dataset.type);
+
+            if (selectedFeatures.length === 0) {
+                showError('❌ Please select at least one content type to scrape');
+                return;
+            }
+
+            const loadingSection = document.getElementById('loadingSection');
+            document.getElementById('contentAnalysis').style.display = 'none';
+            loadingSection.style.display = 'block';
+            document.getElementById('loadingText').textContent = `🚀 Scraping ${selectedFeatures.length} content type(s)... Full extraction in progress (no limits!)`;
+            setStep(3);
+
+            try {
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: currentURL,
+                        features: selectedFeatures
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentData = result.data;
+                    displayResults(result.data, result.total_items);
+                    showSuccess(result.message);
+                } else {
+                    showError(result.error);
+                    document.getElementById('contentAnalysis').style.display = 'block';
+                    setStep(2);
+                }
+            } catch (error) {
+                showError('🔌 Network error: Unable to connect to server.');
+                document.getElementById('contentAnalysis').style.display = 'block';
+                setStep(2);
+            } finally {
+                loadingSection.style.display = 'none';
+            }
+        }
+
+        function displayResults(data, totalItems) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContent = document.getElementById('resultsContent');
+            const statsBar = document.getElementById('statsBar');
+
+            // Calculate stats
+            const stats = calculateStats(data);
+            
+            let statsHTML = '<div class="stats-grid">';
+            for (const [label, value] of Object.entries(stats)) {
+                statsHTML += `
+                    <div class="stat-item">
+                        <div class="stat-value">${value.toLocaleString()}</div>
+                        <div class="stat-label">${label}</div>
+                    </div>
+                `;
+            }
+            statsHTML += '</div>';
+            statsBar.innerHTML = statsHTML;
+
+            // Display metadata
+            let html = '<div class="metadata">';
+            html += `<div class="metadata-item"><span class="metadata-label">🌐 URL:</span><span class="metadata-value">${escapeHtml(data.metadata.url)}</span></div>`;
+            html += `<div class="metadata-item"><span class="metadata-label">📄 Title:</span><span class="metadata-value">${escapeHtml(data.metadata.title)}</span></div>`;
+            if (data.metadata.description) {
+                html += `<div class="metadata-item"><span class="metadata-label">📝 Description:</span><span class="metadata-value">${escapeHtml(data.metadata.description)}</span></div>`;
+            }
+            html += `<div class="metadata-item"><span class="metadata-label">🕐 Scraped:</span><span class="metadata-value">${data.metadata.timestamp}</span></div>`;
+            html += `<div class="metadata-item"><span class="metadata-label">📊 Total Items:</span><span class="metadata-value"><strong>${totalItems.toLocaleString()}</strong></span></div>`;
+            html += '</div>';
+
+            // Display data sections
+            for (const [category, items] of Object.entries(data.data)) {
+                if (!items || (Array.isArray(items) && items.length === 0)) continue;
+
+                const categoryIcon = getCategoryIcon(category);
+                html += `<div class="data-section">`;
+                html += `<h3>${categoryIcon} ${formatName(category)}</h3>`;
+
+                // Special handling for forms
+                if (category === 'forms' && Array.isArray(items)) {
+                    items.forEach((form, index) => {
+                        html += '<div class="data-item">';
+                        html += `<strong>Form ${form.form_number || index + 1}:</strong>`;
+                        html += `<div class="data-item-content">`;
+                        html += `<strong>ID:</strong> ${escapeHtml(form.form_id || 'N/A')}<br>`;
+                        html += `<strong>Name:</strong> ${escapeHtml(form.form_name || 'N/A')}<br>`;
+                        html += `<strong>Action:</strong> ${escapeHtml(form.action || 'N/A')}<br>`;
+                        html += `<strong>Method:</strong> ${escapeHtml(form.method || 'GET')}<br>`;
+                        html += `<strong>Total Fields:</strong> ${form.total_fields || 0} `;
+                        html += `(${form.hidden_fields || 0} hidden, ${form.required_fields || 0} required, ${form.disabled_fields || 0} disabled)<br>`;
+                        
+                        if (form.fields && form.fields.length > 0) {
+                            html += `<br><strong>Fields (showing first 5):</strong><br>`;
+                            html += `<div style="margin-left: 20px; margin-top: 5px;">`;
+                            form.fields.slice(0, 5).forEach((field, idx) => {
+                                html += `<div style="margin-bottom: 8px; padding: 8px; background: #f0f4ff; border-radius: 5px;">`;
+                                html += `<strong>${idx + 1}. ${escapeHtml(field.label || field.name || 'Unnamed')}</strong><br>`;
+                                html += `Type: ${escapeHtml(field.input_type || 'text')}`;
+                                if (field.hidden) html += ` <em>(Hidden)</em>`;
+                                if (field.required) html += ` <em>(Required)</em>`;
+                                if (field.disabled) html += ` <em>(Disabled)</em>`;
+                                if (field.readonly) html += ` <em>(Readonly)</em>`;
+                                html += `<br>`;
+                                if (field.name) html += `Name: ${escapeHtml(field.name)}<br>`;
+                                if (field.value) html += `Value: ${escapeHtml(field.value)}<br>`;
+                                if (field.placeholder) html += `Placeholder: ${escapeHtml(field.placeholder)}<br>`;
+                                if (field.options_count) html += `Options: ${field.options_count}<br>`;
+                                html += `</div>`;
+                            });
+                            if (form.fields.length > 5) {
+                                html += `<em>... and ${form.fields.length - 5} more fields</em>`;
+                            }
+                            html += `</div>`;
+                        }
+                        
+                        html += `</div></div>`;
+                    });
+                    
+                    if (items.length > 0) {
+                        html += `<div class="more-items-notice">
+                            💾 Complete form details with all fields available in Excel export
+                        </div>`;
+                    }
+                }
+                else if (Array.isArray(items)) {
+                    const displayLimit = 10;
+                    const itemsToShow = items.slice(0, displayLimit);
+                    
+                    itemsToShow.forEach((item, index) => {
+                        html += '<div class="data-item">';
+                        if (typeof item === 'object' && item !== null) {
+                            for (const [key, value] of Object.entries(item)) {
+                                if (key !== 'position' && value !== null && value !== '') {
+                                    html += `<strong>${formatKey(key)}:</strong>`;
+                                    const displayValue = String(value).length > 500 ? String(value).substring(0, 500) + '...' : String(value);
+                                    html += `<div class="data-item-content">${escapeHtml(displayValue)}</div>`;
+                                }
+                            }
+                        } else {
+                            const displayValue = String(item).length > 500 ? String(item).substring(0, 500) + '...' : String(item);
+                            html += `<div class="data-item-content">${escapeHtml(displayValue)}</div>`;
+                        }
+                        html += '</div>';
+                    });
+
+                    if (items.length > displayLimit) {
+                        html += `<div class="more-items-notice">
+                            ➕ ${(items.length - displayLimit).toLocaleString()} more items available in export
+                        </div>`;
+                    }
+                } else if (typeof items === 'object' && items !== null) {
+                    html += '<div class="data-item">';
+                    for (const [key, value] of Object.entries(items)) {
+                        if (value !== null && value !== '') {
+                            html += `<strong>${formatKey(key)}:</strong>`;
+                            if (Array.isArray(value)) {
+                                const displayItems = value.slice(0, 15);
+                                html += `<div class="data-item-content">${displayItems.map(v => escapeHtml(String(v))).join(', ')}`;
+                                if (value.length > 15) {
+                                    html += ` <em>(+ ${value.length - 15} more)</em>`;
+                                }
+                                html += `</div>`;
+                            } else {
+                                const displayValue = String(value).length > 500 ? String(value).substring(0, 500) + '...' : String(value);
+                                html += `<div class="data-item-content">${escapeHtml(displayValue)}</div>`;
+                            }
+                        }
+                    }
+                    html += '</div>';
+                }
+
+                html += '</div>';
+            }
+
+            resultsContent.innerHTML = html;
+            resultsSection.style.display = 'block';
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'titles': '📌',
+                'descriptions': '📝',
+                'images': '🖼️',
+                'links': '🔗',
+                'tables': '📊',
+                'contact_info': '📧',
+                'prices': '💰',
+                'videos': '🎥',
+                'forms': '📋',
+                'meta': '🏷️',
+                'products': '🛍️',
+                'authors': '✍️',
+                'social_links': '🔗'
+            };
+            return icons[category] || '📦';
+        }
+
+        function calculateStats(data) {
+            const stats = {};
+
+            for (const [category, items] of Object.entries(data.data)) {
+                let count = 0;
+                
+                if (Array.isArray(items)) {
+                    count = items.length;
+                } else if (typeof items === 'object' && items !== null) {
+                    // For contact_info and similar objects with arrays
+                    count = Object.values(items).reduce((sum, val) => {
+                        if (Array.isArray(val)) {
+                            return sum + val.length;
+                        } else if (typeof val === 'number') {
+                            return sum + val;
+                        }
+                        return sum + 1;
+                    }, 0);
+                } else {
+                    count = 1;
+                }
+                
+                if (count > 0) {
+                    stats[formatName(category)] = count;
+                }
+            }
+
+            // Calculate total
+            const total = Object.values(stats).reduce((sum, val) => sum + val, 0);
+            
+            // Put total first
+            return {
+                'Total Items': total,
+                ...stats
+            };
+        }
+
+        function formatName(name) {
+            return name.replace(/_/g, ' ')
+                      .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function formatKey(key) {
+            return key.replace(/_/g, ' ')
+                      .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        async function exportData(format) {
+            if (!currentData) {
+                showError('❌ No data to export');
+                return;
+            }
+
+            showInfo(`⏳ Preparing ${format.toUpperCase()} export...`);
+
+            try {
+                const response = await fetch('/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        format: format,
+                        data: currentData
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `scraped_data_${Date.now()}.${format === 'xlsx' ? 'xlsx' : format}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showSuccess(`✅ Data exported successfully as ${format.toUpperCase()}!`);
+                } else {
+                    const error = await response.json();
+                    showError(error.error || 'Export failed. Please try again.');
+                }
+            } catch (error) {
+                showError('❌ Export error: ' + error.message);
+            }
+        }
+
+        function backToURL() {
+            document.getElementById('contentAnalysis').style.display = 'none';
+            document.getElementById('urlSection').style.display = 'block';
+            setStep(1);
+        }
+
+        function resetAll() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('urlSection').style.display = 'block';
+            document.getElementById('contentAnalysis').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('errorAlert').style.display = 'none';
+            document.getElementById('successAlert').style.display = 'none';
+            document.getElementById('infoAlert').style.display = 'none';
+            currentData = null;
+            availableContent = null;
+            currentURL = '';
+            setStep(1);
+        }
+
+        function startNewScrape() {
+            resetAll();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showAbout() {
+            alert('Advanced Web Scraper Pro\n\n' +
+                  '✨ Features:\n' +
+                  '• Dynamic content analysis\n' +
+                  '• Intelligent NLP-based extraction\n' +
+                  '• Complete data scraping (no omissions)\n' +
+                  '• Clean, organized Excel exports\n' +
+                  '• Multiple data types support\n\n' +
+                  'Built with Flask, Beautiful Soup, & pandas');
+        }
+
+        // Enter key support
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeURL();
+            }
+        });
+
+        // Prevent form submission on checkbox click
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                if (e.target.type === 'checkbox' && e.target.closest('.content-card')) {
+                    e.stopPropagation();
+                    const card = e.target.closest('.content-card');
+                    if (e.target.checked) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+        });
+
+        // Show loading message on page load
+        console.log('%c🕷️ QuickSilver', 'font-size: 20px; font-weight: bold; color: #667eea;');
+        console.log('%cReady to scrape!', 'font-size: 14px; color: #4CAF50;');
+    </script>
+</body>
+</html>
